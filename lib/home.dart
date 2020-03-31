@@ -178,6 +178,29 @@ class _HomeState extends State<Home> {
                                   }),
                             ),
                           ),
+                          Flexible(
+                            flex: 1,
+                            child: Center(
+                              child: IconButton(
+                                  icon: Icon(
+                                    Icons.refresh,
+                                    color: Colors.black,
+                                  ),
+                                  tooltip: "Refresh",
+                                  onPressed: () {
+                                    String finalURL = currURL;
+                                    if (_webViewController != null) {
+                                      updateLoading(true);
+                                      _webViewController
+                                          .loadUrl(finalURL)
+                                          .then((onValue) {})
+                                          .catchError((e) {
+                                        updateLoading(false);
+                                      });
+                                    }
+                                  }),
+                            ),
+                          ),
                           Flexible(flex: 1, child: Center(child: Menu()))
                         ],
                       ),
