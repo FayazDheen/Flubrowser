@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animations/loading_animations.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/services.dart';
@@ -23,14 +24,28 @@ class _HomeState extends State<Home> {
   }
 
   String currURL = "";
+  // WebViewController controllerGlobal;
+
+  Future<bool> _exitApp(BuildContext context) async {
+    if (await _webViewController.canGoBack()) {
+      print("onwill goback");
+      _webViewController.canGoBack();
+      return true;
+    } else {
+      Scaffold.of(context).showSnackBar(
+        const SnackBar(content: Text("No back history item")),
+      );
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: DoubleBackToCloseApp(
-        snackBar: SnackBar(content: Text("Press Again to Exit!")),
-        child: SafeArea(
+    return WillPopScope(
+      onWillPop: () => _exitApp(context),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
           child: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
@@ -49,8 +64,10 @@ class _HomeState extends State<Home> {
                           Flexible(
                               flex: 2,
                               child: IconButton(
+                                splashColor: Colors.blue,
                                   icon: Icon(
                                     Icons.home,
+                                    
                                     color: Colors.black,
                                   ),
                                   onPressed: () {
@@ -64,18 +81,7 @@ class _HomeState extends State<Home> {
                                         updateLoading(false);
                                       });
                                     }
-                                  })
-                              // Text(
-                              //   "https://",
-                              //   style: TextStyle(
-                              //       color: Colors.white, fontSize: 15),)
-                              ),
-                          // Flexible(
-                          //     flex: 2,
-                          //     child: Icon(
-                          //       Icons.lock,
-                          //       color: Colors.white,
-                          //     )),
+                                  })),
                           Flexible(
                             flex: 6,
                             child: Padding(
@@ -207,11 +213,17 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
+                Container(
+                  color: Colors.grey[200],
+                  height: 2,
+                ),
+                (showLoading) ? LinearProgressIndicator(backgroundColor: Colors.grey,) : Container(),
                 Flexible(
                     flex: 9,
                     child: Stack(
                       children: <Widget>[
                         WebView(
+
                           initialUrl: 'http://google.co.in',
                           onPageFinished: (data) {
                             updateLoading(false);
@@ -224,16 +236,6 @@ class _HomeState extends State<Home> {
                             _webViewController = webViewController;
                           },
                         ),
-                        (showLoading)
-                            ? Center(
-                                child: LoadingBouncingGrid.square(
-                                  borderColor: Colors.white,
-                                  borderSize: 2.0,
-                                  size: 50,
-                                  backgroundColor: Colors.black,
-                                ),
-                              )
-                            : Center()
                       ],
                     )),
               ],

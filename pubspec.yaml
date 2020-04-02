@@ -21,6 +21,7 @@ dependencies:
   double_back_to_close_app: ^0.1.2
   loading_animations: ^2.1.0
   flutter_launcher_icons: ^0.7.4
+  percent_indicator: ^2.1.1+1
   flutter:
     sdk: flutter
 
